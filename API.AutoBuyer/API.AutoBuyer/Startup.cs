@@ -1,5 +1,5 @@
 using System.Text;
-using AutoBuyer.API.POC.Providers;
+using AutoBuyer.API.Providers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

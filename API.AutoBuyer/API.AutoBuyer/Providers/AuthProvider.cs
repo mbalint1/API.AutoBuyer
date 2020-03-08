@@ -1,5 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using AutoBuyer.API.Core;
+using AutoBuyer.API.Core.Utilities;
 using AutoBuyer.API.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AutoBuyer.API.Providers
 {
@@ -7,15 +14,33 @@ namespace AutoBuyer.API.Providers
     {
         public AuthResponse Authenticate(string user, string password)
         {
-            if (password == "2019ScrubADunkChampion!")
+            var userData = new UsersRepo().GetUser(user.Trim());
+
+            var goodPassword = PasswordUtility.VerfiyHash(userData.PasswordHash, password.Trim());
+
+            if (goodPassword)
             {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenIssueDate = DateTime.Now;
+                var tokenExpiration = DateTime.Now.AddHours(12);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new List<Claim> {new Claim("User", user.Trim().ToLower())}),
+                    Expires = tokenExpiration,
+                    //TODO: Get this out of a config or DB
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes("JakeGuentzelEatsFriedGreenTomatoes")), SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+
                 return new AuthResponse
                 {
                     Authenticated = true,
                     Username = user,
-                    AccessToken = "321sdf321asd3f21sad3f21as3df21",
-                    TokenIssueDate = DateTime.Now,
-                    TokenExpirationDate = DateTime.Now.AddDays(1)
+                    AccessToken = tokenHandler.WriteToken(token),
+                    TokenIssueDate = tokenIssueDate,
+                    TokenExpirationDate = tokenExpiration
                 };
             }
             else

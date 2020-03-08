@@ -351,3 +351,4 @@ MigrationBackup/
 /API.AutoBuyer/API.AutoBuyer/appsettings.json
 /API.AutoBuyer/API.AutoBuyer/appsettings.Development.json
 /API.AutoBuyer/API.AutoBuyer/Properties/launchSettings.json
+/API.AutoBuyer/API.Core/Utilities/ConnectionUtility.cs
