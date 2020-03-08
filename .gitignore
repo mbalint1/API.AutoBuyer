@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/API.AutoBuyer/API.AutoBuyer/appsettings.json
+/API.AutoBuyer/API.AutoBuyer/appsettings.Development.json
+/API.AutoBuyer/API.AutoBuyer/Properties/launchSettings.json
