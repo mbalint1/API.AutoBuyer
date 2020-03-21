@@ -24,8 +24,7 @@ namespace AutoBuyer.API.Core
 
         public User GetUser(string userName)
         {
-            //TODO: Finish
-            return new User();
+            return DbProvider.GetUser(userName);
         }
     }
 }

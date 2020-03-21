@@ -42,7 +42,7 @@ namespace AutoBuyer.API.Controllers
             }
             catch (Exception ex)
             {
-                return Problem(ex.Message); //TODO: Probably shouldn't do this
+                return Problem("Something is broke, yo"); //TODO: Probably shouldn't do this
             }
         }
     }

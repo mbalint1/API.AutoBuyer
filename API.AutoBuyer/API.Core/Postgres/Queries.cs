@@ -14,6 +14,10 @@ namespace AutoBuyer.API.Core.Postgres
 
         public static string InsertUser = @"INSERT INTO public.""Users"" (""User_Name"", ""Email"", ""Password_Hash"", ""Lockout_Enabled"", ""Lockout_End_Date"", ""Access_Fail_Count"", ""Is_Temp_Password"", ""Created_By"", ""Created_Date"", ""Modified_By"", ""Modified_Date"") VALUES (@userName, @email, @passwordHash, @lockoutEnabled, @lockoutEndDate, @accessFailCount, @isTempPassword, @createdBy, @createdDate, @modifiedBy, @modifiedDate) RETURNING ""User_ID"";";
 
+        public static string SelectUser = @"Select ""User_ID"", ""User_Name"", ""Email"", ""Password_Hash"", ""Lockout_Enabled"", ""Lockout_End_Date"", ""Access_Fail_Count"", ""Is_Temp_Password"", ""Created_By"", ""Created_Date"", ""Modified_By"", ""Modified_Date"" from public.""Users"" where lower(""User_Name"") = @userName;";
+        
+        public static string InsertTransactionHistory = @"INSERT INTO public.""Transaction_History"" (""Transaction_Type"", ""Player_Name"", ""Search_Price"", ""Sell_Price"", ""Transaction_Date"", ""User_Name"") VALUES (@transactionType, @playerName, @searchPrice, @sellPrice, @transactionDate, @userName) RETURNING ""Transaction_ID"";";
+
         public static void AddPlayerParameters(NpgsqlCommand cmd, Player player)
         {
             cmd.Parameters.AddWithValue("name", player.Name);
@@ -67,6 +71,45 @@ namespace AutoBuyer.API.Core.Postgres
             cmd.Parameters.AddWithValue("createdBy", "AutoBuyer.LogParser");
         }
 
+        public static void AddTransactionHistoryParams(NpgsqlCommand cmd, TransactionLog log)
+        {
+            string postgresSucksAtEnums;
+
+            switch (log.Type)
+            {
+                case TransactionType.SuccessfulPurchase:
+                    postgresSucksAtEnums = "SuccessfulPurchase";
+                    break;
+                case TransactionType.FailedPurchase:
+                    postgresSucksAtEnums = "FailedPurchase";
+                    break;
+                case TransactionType.SuccessfulSale:
+                    postgresSucksAtEnums = "SuccessfulSale";
+                    break;
+                case TransactionType.FailedSale:
+                    postgresSucksAtEnums = "FailedSale";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            cmd.Parameters.AddWithValue("transactionType", postgresSucksAtEnums);
+            cmd.Parameters.AddWithValue("playerName", log.PlayerName);
+            cmd.Parameters.AddWithValue("searchPrice", log.SearchPrice);
+
+            if (log.SellPrice == null)
+            {
+                cmd.Parameters.AddWithValue("sellPrice", DBNull.Value);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("sellPrice", log.SellPrice);
+            }
+
+            cmd.Parameters.AddWithValue("transactionDate", log.TransactionDate);
+            cmd.Parameters.AddWithValue("userName", log.UserName);
+        }
+
         public static void AddUserInsertParams(NpgsqlCommand cmd, User user)
         {
             cmd.Parameters.AddWithValue("userName", user.UserName);
@@ -81,5 +124,7 @@ namespace AutoBuyer.API.Core.Postgres
             cmd.Parameters.AddWithValue("modifiedBy", user.ModifiedBy);
             cmd.Parameters.AddWithValue("modifiedDate", user.ModifiedDate);
         }
+
+
     }
 }

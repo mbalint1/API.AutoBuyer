@@ -10,5 +10,7 @@ namespace AutoBuyer.API.Core.Interfaces
         void InsertTransactionLog(TransactionLog log);
 
         void InsertUser(User user);
+
+        User GetUser(string userName);
     }
 }

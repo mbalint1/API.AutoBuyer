@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using AutoBuyer.API.Core.DTO;
@@ -79,8 +80,8 @@ namespace AutoBuyer.API.Core.Postgres
                     using (var cmd = new NpgsqlCommand())
                     {
                         cmd.Connection = conn;
-                        cmd.CommandText = Queries.InsertTransactionLogs;
-                        Queries.AddTransactionLogParams(cmd, log);
+                        cmd.CommandText = Queries.InsertTransactionHistory;
+                        Queries.AddTransactionHistoryParams(cmd, log);
                         cmd.Prepare();
                         var transactionId = cmd.ExecuteScalar()?.ToString();
                         log.TransactionId = transactionId;
@@ -118,6 +119,48 @@ namespace AutoBuyer.API.Core.Postgres
                 //TODO Log
                 throw;
             }
+        }
+
+        public User GetUser(string userName)
+        {
+            var user = new User();
+
+            try
+            {
+                using (var conn = new NpgsqlConnection(_connString))
+                {
+                    conn.Open();
+
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        var query = Queries.SelectUser.Replace(@"@userName", $"'{userName.Trim().ToLower()}'");
+                        cmd.CommandText = query;
+
+                        using (var adapter = new NpgsqlDataAdapter(cmd))
+                        {
+                            var dt = new DataTable();
+
+                            adapter.Fill(dt);
+
+                            if (dt.Rows.Count > 0)
+                            {
+                                user.PasswordHash = dt.Rows[0]["Password_Hash"].ToString();
+
+                                //TODO: Add the other columns
+                            }
+                        }
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                //TODO Log
+                throw;
+            }
+
+            return user;
         }
     }
 }
