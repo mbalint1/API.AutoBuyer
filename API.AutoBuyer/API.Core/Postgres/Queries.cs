@@ -18,6 +18,8 @@ namespace AutoBuyer.API.Core.Postgres
         
         public static string InsertTransactionHistory = @"INSERT INTO public.""Transaction_History"" (""Transaction_Type"", ""Player_Name"", ""Search_Price"", ""Sell_Price"", ""Transaction_Date"", ""User_Name"") VALUES (@transactionType, @playerName, @searchPrice, @sellPrice, @transactionDate, @userName) RETURNING ""Transaction_ID"";";
 
+        public static string SelectPlayers = @"select p.""Name"", p.""Player_Id"", pv.""Version_Id"", pv.""Player_Type"", pv.""Rating"", pv.""Position"" from public.""Players"" p inner join public.""Player_Version"" pv on p.""Player_Id"" = pv.""Player_Id""";
+
         public static void AddPlayerParameters(NpgsqlCommand cmd, Player player)
         {
             cmd.Parameters.AddWithValue("name", player.Name);

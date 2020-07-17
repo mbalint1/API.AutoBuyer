@@ -29,7 +29,7 @@ namespace AutoBuyer.API.Providers
                     Subject = new ClaimsIdentity(new List<Claim> {new Claim("User", user.Trim().ToLower())}),
                     Expires = tokenExpiration,
                     //TODO: Get this out of a config or DB
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes("JakeGuentzelEatsFriedGreenTomatoes")), SecurityAlgorithms.HmacSha256Signature)
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(ConnectionUtility.GetSharedSecret())), SecurityAlgorithms.HmacSha256Signature)
                 };
 
                 var token = tokenHandler.CreateToken(tokenDescriptor);

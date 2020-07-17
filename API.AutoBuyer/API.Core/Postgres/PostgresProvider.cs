@@ -162,5 +162,53 @@ namespace AutoBuyer.API.Core.Postgres
 
             return user;
         }
+
+        public List<Player> GetPlayers()
+        {
+            var players = new List<Player>();
+
+            try
+            {
+                using (var conn = new NpgsqlConnection(_connString))
+                {
+                    conn.Open();
+
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = Queries.SelectPlayers;
+
+                        using (var adapter = new NpgsqlDataAdapter(cmd))
+                        {
+                            var dt = new DataTable();
+
+                            adapter.Fill(dt);
+
+                            if (dt.Rows.Count > 0)
+                            {
+                                foreach (DataRow row in dt.Rows)
+                                {
+                                    players.Add(new Player
+                                    {
+                                        Name = row["Name"].ToString(),
+                                        Id = row["Player_Id"].ToString(),
+                                        //TODO: This will have to change once we allow for multiple versions of a player
+                                        Versions = new List<PlayerVersion> { new PlayerVersion { VersionId = row["Version_Id"].ToString(), Rating = Convert.ToInt32(row["Rating"].ToString()), Position = row["Position"].ToString()} }
+                                    });
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO: Log
+                throw;
+            }
+
+            return players;
+        }
     }
 }

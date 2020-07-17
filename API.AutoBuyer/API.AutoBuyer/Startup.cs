@@ -1,4 +1,5 @@
 using System.Text;
+using AutoBuyer.API.Core.Utilities;
 using AutoBuyer.API.Providers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +17,7 @@ namespace AutoBuyer.API.POC
         {
             services.AddScoped<IAuthProvider, AuthProvider>();
             services.AddScoped<ITransactionProvider, TransactionProvider>();
+            services.AddScoped<IPlayerProvider, PlayerProvider>();
 
             services.AddCors();
             services.AddMvc(option => option.EnableEndpointRouting = false);
@@ -32,7 +34,7 @@ namespace AutoBuyer.API.POC
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("JakeGuentzelEatsFriedGreenTomatoes")),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(ConnectionUtility.GetSharedSecret())),
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };

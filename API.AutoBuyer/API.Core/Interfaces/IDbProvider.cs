@@ -12,5 +12,7 @@ namespace AutoBuyer.API.Core.Interfaces
         void InsertUser(User user);
 
         User GetUser(string userName);
+
+        List<Player> GetPlayers();
     }
 }

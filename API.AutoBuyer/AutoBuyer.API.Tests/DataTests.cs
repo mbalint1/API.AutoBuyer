@@ -64,5 +64,13 @@ namespace AutoBuyer.API.Tests
         {
             var result = new UsersRepo().GetUser("mbalint");
         }
+
+        [Test]
+        public void GetPlayers()
+        {
+            var players = new PlayersRepo().GetPlayers();
+
+            Assert.IsTrue(players.Count > 0);
+        }
     }
 }
