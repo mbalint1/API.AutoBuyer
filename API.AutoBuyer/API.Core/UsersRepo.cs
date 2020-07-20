@@ -26,5 +26,15 @@ namespace AutoBuyer.API.Core
         {
             return DbProvider.GetUser(userName);
         }
+
+        public string StartSession(string playerVersionId, string userId)
+        {
+            return DbProvider.TryLockPlayer(playerVersionId, userId);
+        }
+
+        public void EndSession(string sessionId, string playerVersionId)
+        {
+            DbProvider.EndSession(sessionId, playerVersionId);
+        }
     }
 }

@@ -210,5 +210,59 @@ namespace AutoBuyer.API.Core.Postgres
 
             return players;
         }
+
+        public string TryLockPlayer(string playerVersionId, string userId)
+        {
+            try
+            {
+                string id;
+
+                using (var conn = new NpgsqlConnection(_connString))
+                {
+                    conn.Open();
+
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = Queries.SessionLockFunction;
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        var response = cmd.ExecuteScalar();
+                        id = response.ToString();
+                    }
+                }
+
+                return id;
+            }
+            catch (Exception ex)
+            {
+                //TODO Log
+                throw;
+            }
+        }
+
+        public void EndSession(string sessionId, string playerVersionId)
+        {
+            try
+            {
+                using (var conn = new NpgsqlConnection(_connString))
+                {
+                    conn.Open();
+
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = Queries.UpdateSession;
+                        Queries.AddSessionUpdateParams(cmd, sessionId, playerVersionId);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO Log
+                throw;
+            }
+        }
     }
 }

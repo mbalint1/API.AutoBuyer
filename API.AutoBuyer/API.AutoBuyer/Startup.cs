@@ -18,6 +18,7 @@ namespace AutoBuyer.API.POC
             services.AddScoped<IAuthProvider, AuthProvider>();
             services.AddScoped<ITransactionProvider, TransactionProvider>();
             services.AddScoped<IPlayerProvider, PlayerProvider>();
+            services.AddScoped<ISessionProvider, SessionProvider>();
 
             services.AddCors();
             services.AddMvc(option => option.EnableEndpointRouting = false);

@@ -14,5 +14,9 @@ namespace AutoBuyer.API.Core.Interfaces
         User GetUser(string userName);
 
         List<Player> GetPlayers();
+
+        string TryLockPlayer(string playerVersionId, string userId);
+
+        void EndSession(string sessionId, string playerVersionId);
     }
 }

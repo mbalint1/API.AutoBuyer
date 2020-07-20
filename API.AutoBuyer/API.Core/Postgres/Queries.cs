@@ -20,6 +20,10 @@ namespace AutoBuyer.API.Core.Postgres
 
         public static string SelectPlayers = @"select p.""Name"", p.""Player_Id"", pv.""Version_Id"", pv.""Player_Type"", pv.""Rating"", pv.""Position"" from public.""Players"" p inner join public.""Player_Version"" pv on p.""Player_Id"" = pv.""Player_Id""";
 
+        public static string UpdateSession = @"UPDATE public.""Buyer_Session"" set ""Active_Flag"" = 'N', ""End_Time"" = current_timestamp WHERE ""Player_Version_ID"" = @versionId AND ""Session_ID"" = @sessionId;";
+
+        public static string SessionLockFunction = "lock_player";
+
         public static void AddPlayerParameters(NpgsqlCommand cmd, Player player)
         {
             cmd.Parameters.AddWithValue("name", player.Name);
@@ -127,6 +131,10 @@ namespace AutoBuyer.API.Core.Postgres
             cmd.Parameters.AddWithValue("modifiedDate", user.ModifiedDate);
         }
 
-
+        public static void AddSessionUpdateParams(NpgsqlCommand cmd, string sessionId, string playerVersionId)
+        {
+            cmd.Parameters.AddWithValue("sessionId", sessionId);
+            cmd.Parameters.AddWithValue("versionId", playerVersionId);
+        }
     }
 }
