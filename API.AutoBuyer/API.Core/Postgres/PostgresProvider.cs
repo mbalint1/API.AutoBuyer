@@ -146,6 +146,7 @@ namespace AutoBuyer.API.Core.Postgres
                             if (dt.Rows.Count > 0)
                             {
                                 user.PasswordHash = dt.Rows[0]["Password_Hash"].ToString();
+                                user.UserId = dt.Rows[0]["User_ID"].ToString();
 
                                 //TODO: Add the other columns
                             }

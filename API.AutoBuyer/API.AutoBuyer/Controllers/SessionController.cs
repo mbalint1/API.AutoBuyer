@@ -22,13 +22,22 @@ namespace AutoBuyer.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateSession([FromBody] SessionInfo sessionInfo)
+        public IActionResult CreateSession([FromBody] SessionDTO sessionInfo)
         {
             try
             {
-                //var sessionId = _provider.StartSession();
+                var userId = User.Claims.FirstOrDefault(x => x.Type == "UserId");
 
-                return Ok();
+                if (userId == null)
+                {
+                    return Unauthorized("Invalid Token");
+                }
+
+                var sessionId = _provider.StartSession(sessionInfo.PlayerVersionId, userId.Value);
+
+                sessionInfo.SessionId = sessionId;
+
+                return Ok(sessionInfo);
             }
             catch (Exception ex)
             {
@@ -37,11 +46,11 @@ namespace AutoBuyer.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult EndSession()
+        public IActionResult EndSession([FromBody] SessionDTO sessionInfo)
         {
             try
             {
-                //_provider.EndSession();
+                _provider.EndSession(sessionInfo.SessionId, sessionInfo.PlayerVersionId);
 
                 return Ok();
             }
