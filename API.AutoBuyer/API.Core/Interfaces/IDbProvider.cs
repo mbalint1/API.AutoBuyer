@@ -15,8 +15,8 @@ namespace AutoBuyer.API.Core.Interfaces
 
         List<Player> GetPlayers();
 
-        string TryLockPlayer(string playerVersionId, string userId);
+        string TryLockPlayer(string playerVersionId, string userId, int numToBuy);
 
-        void EndSession(string sessionId, string playerVersionId);
+        void EndSession(string sessionId, string playerVersionId, bool captcha, int numBought);
     }
 }

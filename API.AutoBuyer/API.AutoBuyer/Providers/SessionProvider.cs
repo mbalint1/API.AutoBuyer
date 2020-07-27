@@ -11,14 +11,14 @@ namespace AutoBuyer.API.Providers
             Repo = new UsersRepo();
         }
 
-        public string StartSession(string playerVersionId, string userId)
+        public string StartSession(string playerVersionId, string userId, int numToBuy)
         {
-            return Repo.StartSession(playerVersionId, userId);
+            return Repo.StartSession(playerVersionId, userId, numToBuy);
         }
 
-        public void EndSession(string sessionId, string playerVersionId)
+        public void EndSession(string sessionId, string playerVersionId, bool captcha, int numBought)
         {
-            Repo.EndSession(sessionId, playerVersionId);
+            Repo.EndSession(sessionId, playerVersionId, captcha, numBought);
         }
     }
 }

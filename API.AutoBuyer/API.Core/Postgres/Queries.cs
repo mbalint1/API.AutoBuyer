@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoBuyer.API.Core.DTO;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace AutoBuyer.API.Core.Postgres
 {
@@ -20,9 +21,9 @@ namespace AutoBuyer.API.Core.Postgres
 
         public static string SelectPlayers = @"select p.""Name"", p.""Player_Id"", pv.""Version_Id"", pv.""Player_Type"", pv.""Rating"", pv.""Position"" from public.""Players"" p inner join public.""Player_Version"" pv on p.""Player_Id"" = pv.""Player_Id""";
 
-        public static string UpdateSession = @"UPDATE public.""Buyer_Session"" set ""Active_Flag"" = 'N', ""End_Time"" = current_timestamp WHERE ""Player_Version_ID"" = @versionId AND ""Session_ID"" = @sessionId;";
+        public static string UpdateSession = @"UPDATE public.""Buyer_Session"" set ""Active_Flag"" = 'N', ""End_Time"" = current_timestamp, ""Captcha_Flag"" = @captchaFlag, ""Purchased_Num"" = @numBought WHERE ""Player_Version_ID"" = @versionId AND ""Session_ID"" = @sessionId;";
 
-        public static string SessionLockFunction = "lock_player";
+        public static string SessionLockFunction = @"select public.lock_player(@p_version_id, @p_user_id, @p_num_buy);";
 
         public static void AddPlayerParameters(NpgsqlCommand cmd, Player player)
         {
@@ -131,10 +132,19 @@ namespace AutoBuyer.API.Core.Postgres
             cmd.Parameters.AddWithValue("modifiedDate", user.ModifiedDate);
         }
 
-        public static void AddSessionUpdateParams(NpgsqlCommand cmd, string sessionId, string playerVersionId)
+        public static void AddSessionUpdateParams(NpgsqlCommand cmd, string sessionId, string playerVersionId, bool captcha, int numBought)
         {
-            cmd.Parameters.AddWithValue("sessionId", sessionId);
-            cmd.Parameters.AddWithValue("versionId", playerVersionId);
+            cmd.Parameters.AddWithValue("sessionId", Convert.ToInt32(sessionId));
+            cmd.Parameters.AddWithValue("versionId", Convert.ToInt32(playerVersionId));
+            cmd.Parameters.AddWithValue("captchaFlag", NpgsqlDbType.Char, captcha ? "Y" : "N");
+            cmd.Parameters.AddWithValue("numBought", NpgsqlDbType.Integer, numBought);
+        }
+
+        public static void AddSessionCreateParams(NpgsqlCommand cmd, string versionId, string userId, int numToBuy)
+        {
+            cmd.Parameters.AddWithValue("p_version_id", NpgsqlDbType.Integer, Convert.ToInt32(versionId));
+            cmd.Parameters.AddWithValue("p_user_id", NpgsqlDbType.Integer, Convert.ToInt32(userId));
+            cmd.Parameters.AddWithValue("p_num_buy", NpgsqlDbType.Integer, numToBuy);
         }
     }
 }

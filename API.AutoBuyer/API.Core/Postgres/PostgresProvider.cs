@@ -212,7 +212,7 @@ namespace AutoBuyer.API.Core.Postgres
             return players;
         }
 
-        public string TryLockPlayer(string playerVersionId, string userId)
+        public string TryLockPlayer(string playerVersionId, string userId, int numToBuy)
         {
             try
             {
@@ -226,8 +226,8 @@ namespace AutoBuyer.API.Core.Postgres
                     {
                         cmd.Connection = conn;
                         cmd.CommandText = Queries.SessionLockFunction;
-                        cmd.CommandType = CommandType.StoredProcedure;
-
+                        cmd.CommandType = CommandType.Text;
+                        Queries.AddSessionCreateParams(cmd, playerVersionId, userId, numToBuy);
                         var response = cmd.ExecuteScalar();
                         id = response.ToString();
                     }
@@ -242,7 +242,7 @@ namespace AutoBuyer.API.Core.Postgres
             }
         }
 
-        public void EndSession(string sessionId, string playerVersionId)
+        public void EndSession(string sessionId, string playerVersionId, bool captcha, int numBought)
         {
             try
             {
@@ -254,7 +254,7 @@ namespace AutoBuyer.API.Core.Postgres
                     {
                         cmd.Connection = conn;
                         cmd.CommandText = Queries.UpdateSession;
-                        Queries.AddSessionUpdateParams(cmd, sessionId, playerVersionId);
+                        Queries.AddSessionUpdateParams(cmd, sessionId, playerVersionId, captcha, numBought);
                         cmd.ExecuteNonQuery();
                     }
                 }

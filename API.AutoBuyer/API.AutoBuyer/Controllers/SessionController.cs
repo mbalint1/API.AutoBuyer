@@ -33,7 +33,7 @@ namespace AutoBuyer.API.Controllers
                     return Unauthorized("Invalid Token");
                 }
 
-                var sessionId = _provider.StartSession(sessionInfo.PlayerVersionId, userId.Value);
+                var sessionId = _provider.StartSession(sessionInfo.PlayerVersionId, userId.Value, sessionInfo.SearchNum);
 
                 sessionInfo.SessionId = sessionId;
 
@@ -50,7 +50,7 @@ namespace AutoBuyer.API.Controllers
         {
             try
             {
-                _provider.EndSession(sessionInfo.SessionId, sessionInfo.PlayerVersionId);
+                _provider.EndSession(sessionInfo.SessionId, sessionInfo.PlayerVersionId, sessionInfo.Captcha, sessionInfo.PurchasedNum);
 
                 return Ok();
             }

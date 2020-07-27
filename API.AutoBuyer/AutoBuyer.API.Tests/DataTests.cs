@@ -2,6 +2,8 @@ using System;
 using AutoBuyer.API.Core;
 using AutoBuyer.API.Core.DTO;
 using AutoBuyer.API.Core.Utilities;
+using AutoBuyer.API.Models;
+using AutoBuyer.API.Providers;
 using NUnit.Framework;
 
 namespace AutoBuyer.API.Tests
@@ -71,6 +73,18 @@ namespace AutoBuyer.API.Tests
             var players = new PlayersRepo().GetPlayers();
 
             Assert.IsTrue(players.Count > 0);
+        }
+
+        [Test]
+        public void LockPlayer()
+        {
+            var result = new SessionProvider().StartSession("997", "1003", 15);
+        }
+
+        [Test]
+        public void EndSession()
+        {
+            new SessionProvider().EndSession("1030", "997", true, 5);
         }
     }
 }

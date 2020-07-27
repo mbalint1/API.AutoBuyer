@@ -27,14 +27,14 @@ namespace AutoBuyer.API.Core
             return DbProvider.GetUser(userName);
         }
 
-        public string StartSession(string playerVersionId, string userId)
+        public string StartSession(string playerVersionId, string userId, int numToBuy)
         {
-            return DbProvider.TryLockPlayer(playerVersionId, userId);
+            return DbProvider.TryLockPlayer(playerVersionId, userId, numToBuy);
         }
 
-        public void EndSession(string sessionId, string playerVersionId)
+        public void EndSession(string sessionId, string playerVersionId, bool captcha, int numBought)
         {
-            DbProvider.EndSession(sessionId, playerVersionId);
+            DbProvider.EndSession(sessionId, playerVersionId, captcha, numBought);
         }
     }
 }
