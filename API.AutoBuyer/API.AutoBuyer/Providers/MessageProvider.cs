@@ -11,14 +11,31 @@ namespace AutoBuyer.API.Providers
         {
             try
             {
-                var client = new SmtpClient("smtp.gmail.com", 587)
+                var client = new SmtpClient
                 {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
                     UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(ConnectionUtility.GetFromEmail(), ConnectionUtility.GetEmailPassword()),
-                    EnableSsl = true
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    EnableSsl = true,
+                    Credentials = new NetworkCredential(ConnectionUtility.GetFromEmail(),
+                        ConnectionUtility.GetEmailPassword())
                 };
+                client.Send(new MailMessage
+                {
+                    Subject = subject,
+                    Body = body,
+                    To = { emailTo }
+                });
 
-                client.Send(ConnectionUtility.GetFromEmail(), emailTo, subject, body);
+                //var client = new SmtpClient("smtp.gmail.com", 587)
+                //{
+                //    UseDefaultCredentials = false,
+                //    Credentials = new NetworkCredential(ConnectionUtility.GetFromEmail(), ConnectionUtility.GetEmailPassword()),
+                //    EnableSsl = true
+                //};
+
+                //client.Send(ConnectionUtility.GetFromEmail(), emailTo, subject, body);
             }
             catch (Exception ex)
             {
