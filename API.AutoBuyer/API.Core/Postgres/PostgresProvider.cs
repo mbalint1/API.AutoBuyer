@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using AutoBuyer.API.Core.DTO;
 using AutoBuyer.API.Core.Interfaces;
@@ -147,6 +146,7 @@ namespace AutoBuyer.API.Core.Postgres
                             {
                                 user.PasswordHash = dt.Rows[0]["Password_Hash"].ToString();
                                 user.UserId = dt.Rows[0]["User_ID"].ToString();
+                                user.Email = dt.Rows[0]["Email"].ToString();
 
                                 //TODO: Add the other columns
                             }

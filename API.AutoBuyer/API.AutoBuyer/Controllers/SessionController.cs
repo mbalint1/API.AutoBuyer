@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoBuyer.API.Models;
 using AutoBuyer.API.Providers;
 using Microsoft.AspNetCore.Authorization;

@@ -26,7 +26,7 @@ namespace AutoBuyer.API.Providers
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = new ClaimsIdentity(new List<Claim> {new Claim("User", user.Trim().ToLower()), new Claim("UserId", userData.UserId)}),
+                    Subject = new ClaimsIdentity(new List<Claim> {new Claim("User", user.Trim().ToLower()), new Claim("UserId", userData.UserId), new Claim("Email", userData.Email)}),
                     Expires = tokenExpiration,
                     //TODO: Get this out of a config or DB
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(ConnectionUtility.GetSharedSecret())), SecurityAlgorithms.HmacSha256Signature)
