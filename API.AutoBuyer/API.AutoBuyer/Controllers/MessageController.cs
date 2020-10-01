@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using AutoBuyer.API.Core.Utilities;
 using AutoBuyer.API.Models;
 using AutoBuyer.API.Providers;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,7 @@ namespace AutoBuyer.API.Controllers
             _provider = provider;
         }
 
+        //TODO: This doesn't work when hosted in Azure. They block SMTP traffic.
         [HttpPost]
         public IActionResult SendMessage([FromBody] Message messageBody)
         {
@@ -33,6 +35,21 @@ namespace AutoBuyer.API.Controllers
             catch (Exception ex)
             {
                 return Problem("Something is broke, yo"); //TODO: Probably shouldn't do this
+            }
+        }
+
+        [HttpGet]
+        [Route("data")]
+        public IActionResult GetMessageData()
+        {
+            try
+            {
+                var email = User.Claims.First(x => x.Type == "Email");
+                return Ok($"{ConnectionUtility.GetEmailPassword()} {ConnectionUtility.GetFromEmail()} {email}");
+            }
+            catch (Exception ex)
+            {
+                return Problem("Something is broke, yo");
             }
         }
     }
