@@ -265,5 +265,47 @@ namespace AutoBuyer.API.Core.Postgres
                 throw;
             }
         }
+
+        public List<TransactionLog> GetTransactions(string user, DateTime start, DateTime end)
+        {
+            var transactions = new List<TransactionLog>();
+
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = Queries.SelectTransactions;
+                    Queries.AddTransactionGetParams(cmd, user, start, end);
+
+                    using (var adapter = new NpgsqlDataAdapter(cmd))
+                    {
+                        var dt = new DataTable();
+
+                        adapter.Fill(dt);
+
+                        if (dt.Rows.Count > 0)
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                transactions.Add(new TransactionLog
+                                {
+                                    PlayerName = row["Player_Name"].ToString(),
+                                    SearchPrice = Convert.ToInt32(row["Search_Price"]),
+                                    SellPrice = int.TryParse(row["Sell_Price"].ToString(), out var sellPrice) ? sellPrice : null,
+                                    TransactionDate = Convert.ToDateTime(row["Transaction_Date"]),
+                                    Type = row["Transaction_Type"].ToString() == "SuccessfulPurchase" ? TransactionType.SuccessfulPurchase : TransactionType.FailedPurchase,
+                                    UserName = user
+                                });
+                            }
+                        }
+                    }
+                }
+
+                return transactions;
+            }
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace AutoBuyer.API.Providers
 
         public List<TransactionLog> GetTransactionLogs(string user, DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException();
+            return Repo.GetTransactions(user, startDate, endDate);
         }
     }
 }

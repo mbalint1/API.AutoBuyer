@@ -23,6 +23,8 @@ namespace AutoBuyer.API.Core.Postgres
 
         public static string SessionLockFunction = @"select public.lock_player(@p_version_id, @p_user_id, @p_num_buy);";
 
+        public static string SelectTransactions = @"select ""Transaction_Type"", ""Player_Name"", ""Search_Price"", ""Sell_Price"", ""Transaction_Date"" from public.""Transaction_History"" where ""User_Name"" = @user and ""Transaction_Date"" between @startDate and @endDate order by ""Transaction_Date"" desc;";
+
         public static void AddPlayerParameters(NpgsqlCommand cmd, Player player)
         {
             cmd.Parameters.AddWithValue("name", player.Name);
@@ -114,6 +116,13 @@ namespace AutoBuyer.API.Core.Postgres
             cmd.Parameters.AddWithValue("p_version_id", NpgsqlDbType.Integer, Convert.ToInt32(versionId));
             cmd.Parameters.AddWithValue("p_user_id", NpgsqlDbType.Integer, Convert.ToInt32(userId));
             cmd.Parameters.AddWithValue("p_num_buy", NpgsqlDbType.Integer, numToBuy);
+        }
+
+        public static void AddTransactionGetParams(NpgsqlCommand cmd, string user, DateTime start, DateTime end)
+        {
+            cmd.Parameters.AddWithValue("user", user);
+            cmd.Parameters.AddWithValue("startDate", NpgsqlDbType.Date, start);
+            cmd.Parameters.AddWithValue("endDate", NpgsqlDbType.Date, end);
         }
     }
 }

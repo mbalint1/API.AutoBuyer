@@ -20,36 +20,49 @@ namespace AutoBuyer.API.Controllers
             _provider = provider;
         }
 
-        //TODO: This doesn't work when hosted in Azure. They block SMTP traffic.
-        [HttpPost]
-        public IActionResult SendMessage([FromBody] Message messageBody)
-        {
-            try
-            {
-                var email = User.Claims.First(x => x.Type == "Email");
+        ////TODO: This doesn't work when hosted in Azure. They block SMTP traffic.
+        //[HttpPost]
+        //public IActionResult SendMessage([FromBody] Message messageBody)
+        //{
+        //    try
+        //    {
+        //        var email = User.Claims.First(x => x.Type == "Email");
 
-                _provider.Send(messageBody.Subject, messageBody.Body, email.Value);
+        //        _provider.Send(messageBody.Subject, messageBody.Body, email.Value);
 
-                return Ok("Sent");
-            }
-            catch (Exception ex)
-            {
-                return Problem("Something is broke, yo"); //TODO: Probably shouldn't do this
-            }
-        }
+        //        return Ok("Sent");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Problem("Something is broke, yo"); //TODO: Probably shouldn't do this
+        //    }
+        //}
 
+        /// <summary>
+        /// Gets message related information needed for Desktop.Autobuyer to send emails
+        /// </summary>
+        /// <response code="200">Message data returned</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="500">API Error</response>
+        [ProducesResponseType(typeof(string), 200)]
         [HttpGet]
         [Route("data")]
         public IActionResult GetMessageData()
         {
             try
             {
-                var email = User.Claims.First(x => x.Type == "Email");
+                var email = User.Claims.FirstOrDefault(x => x.Type == "Email");
+
+                if (email == null)
+                {
+                    return Unauthorized("Invalid token");
+                }
+
                 return Ok($"{ConnectionUtility.GetEmailPassword()} {ConnectionUtility.GetFromEmail()} {email}");
             }
             catch (Exception ex)
             {
-                return Problem("Something is broke, yo");
+                return StatusCode(500, "Error in API. Please try again later.");
             }
         }
     }

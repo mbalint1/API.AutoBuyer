@@ -18,6 +18,13 @@ namespace AutoBuyer.API.Controllers
             _authService = authProvider;
         }
 
+        /// <summary>
+        /// Used to authenticate and get an access token
+        /// </summary>
+        /// <response code="200">Authenticated, token returned</response>
+        /// <response code="400">Missing Required Data</response>
+        /// <response code="401">Unauthorized</response>
+        [ProducesResponseType(typeof(AuthResponse), 200)]
         [AllowAnonymous]
         [HttpPost("token")]
         public IActionResult Authenticate([FromBody]AuthRequest request)
