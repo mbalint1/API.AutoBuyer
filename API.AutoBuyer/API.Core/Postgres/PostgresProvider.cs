@@ -297,7 +297,8 @@ namespace AutoBuyer.API.Core.Postgres
                                     SellPrice = int.TryParse(row["Sell_Price"].ToString(), out var sellPrice) ? sellPrice : null,
                                     TransactionDate = Convert.ToDateTime(row["Transaction_Date"]),
                                     Type = row["Transaction_Type"].ToString() == "SuccessfulPurchase" ? TransactionType.SuccessfulPurchase : TransactionType.FailedPurchase,
-                                    UserName = user
+                                    UserName = user,
+                                    TransactionId = row["Transaction_ID"].ToString()
                                 });
                             }
                         }
